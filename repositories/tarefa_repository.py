@@ -1,5 +1,7 @@
 from database import tarefas_collection
 from bson import ObjectId
+from bson.objectid import InvalidId 
+
 
 def create_tarefa(tarefa_dict):
     result = tarefas_collection.insert_one(tarefa_dict)
@@ -12,16 +14,30 @@ def get_all_tarefas():
     return tarefas
 
 def get_tarefa_by_id(tarefa_id):
-    tarefa = tarefas_collection.find_one({"_id": ObjectId(tarefa_id)})
-    if tarefa:
-        tarefa["_id"] = str(tarefa["_id"])
-    return tarefa
+    try:
+        tarefa = tarefas_collection.find_one({"_id": ObjectId(tarefa_id)})
+        if tarefa:
+            tarefa["_id"] = str(tarefa["_id"])
+        return tarefa
+    except InvalidId:
+        return {"error": "ID inválido"}
 
 def update_tarefa(tarefa_id, tarefa_dict):
-    return tarefas_collection.update_one(
-        {"_id": ObjectId(tarefa_id)},
+    try:
+        obj_id = ObjectId(tarefa_id)  
+    except InvalidId:
+        return {"error": "ID inválido"}
+
+    result = tarefas_collection.update_one(
+        {"_id": obj_id},
         {"$set": tarefa_dict}
     )
+
+    if result.matched_count == 0:  
+        return {"error": "Tarefa não encontrada"}
+
+    return {"message": "Tarefa atualizada com sucesso"}
+
 
 
 def delete_tarefa(tarefa_id):

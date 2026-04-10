@@ -16,9 +16,10 @@ def criar_tarefa(tarefa: Tarefa):
 def buscar_tarefa(tarefa_id: str):
     return get_tarefa_by_id_service(tarefa_id)
 
-@router.put("/tarefas/{tarefa_id}")
-def atualizar_tarefa(tarefa_id: str, tarefa: Tarefa):
-    return update_tarefa_service(tarefa_id, tarefa)
+@router.put("/tarefas/{id}")
+def atualizar_tarefa(id: str, tarefa: Tarefa):
+    
+    return update_tarefa_service(id, tarefa)
 
 @router.delete("/tarefas/{tarefa_id}")
 def deletar_tarefa(tarefa_id: str):
